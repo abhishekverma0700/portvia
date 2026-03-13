@@ -17,6 +17,7 @@ export default function EditPage() {
 
   useEffect(() => {
     setData({ ...resumeData });
+    console.log('[resume-debug] Loaded edit page data', resumeData);
   }, [resumeData]);
 
   const update = (field: keyof ParsedResumeData, value: unknown) => {
@@ -159,12 +160,52 @@ export default function EditPage() {
         </Button>
       </Section>
 
+      <Section title="Certifications">
+        <div className="flex flex-wrap gap-2">
+          {data.certifications.map((item, i) => (
+            <span key={i} className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 px-3 py-1 text-sm">
+              {item}
+              <button onClick={() => update('certifications', data.certifications.filter((_, j) => j !== i))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
+            </span>
+          ))}
+          <button
+            onClick={() => {
+              const cert = prompt('Add certification:');
+              if (cert) update('certifications', [...data.certifications, cert]);
+            }}
+            className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1 text-sm text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+          >
+            <Plus className="h-3 w-3" /> Add
+          </button>
+        </div>
+      </Section>
+
+      <Section title="Achievements">
+        <div className="flex flex-wrap gap-2">
+          {data.achievements.map((item, i) => (
+            <span key={i} className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 px-3 py-1 text-sm">
+              {item}
+              <button onClick={() => update('achievements', data.achievements.filter((_, j) => j !== i))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
+            </span>
+          ))}
+          <button
+            onClick={() => {
+              const achievement = prompt('Add achievement:');
+              if (achievement) update('achievements', [...data.achievements, achievement]);
+            }}
+            className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1 text-sm text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+          >
+            <Plus className="h-3 w-3" /> Add
+          </button>
+        </div>
+      </Section>
+
       {/* Contact */}
       <Section title="Contact">
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Email" value={data.contact.email} onChange={v => update('contact', { ...data.contact, email: v })} />
-          <Field label="Phone" value={data.contact.phone || ''} onChange={v => update('contact', { ...data.contact, phone: v })} />
-          <Field label="Location" value={data.contact.location || ''} onChange={v => update('contact', { ...data.contact, location: v })} />
+          <Field label="Email" value={data.email || data.contact.email || ''} onChange={v => { update('email', v); update('contact', { ...data.contact, email: v }); }} />
+          <Field label="Phone" value={data.phone || data.contact.phone || ''} onChange={v => { update('phone', v); update('contact', { ...data.contact, phone: v }); }} />
+          <Field label="Location" value={data.location || data.contact.location || ''} onChange={v => { update('location', v); update('contact', { ...data.contact, location: v }); }} />
           <Field label="Website" value={data.contact.website || ''} onChange={v => update('contact', { ...data.contact, website: v })} />
         </div>
       </Section>

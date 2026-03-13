@@ -4,6 +4,10 @@ import { Mail, MapPin, Phone, ExternalLink, Github, Linkedin, Twitter } from 'lu
 const iconMap: Record<string, React.ElementType> = { GitHub: Github, LinkedIn: Linkedin, Twitter: Twitter };
 
 export default function DeveloperNeonTemplate({ data }: { data: ParsedResumeData }) {
+  const email = data.email || data.contact.email;
+  const phone = data.phone || data.contact.phone;
+  const location = data.location || data.contact.location;
+
   return (
     <div className="min-h-screen bg-[#0a0e1a] text-[#e0e8f0] font-sans">
       {/* Hero */}
@@ -84,13 +88,31 @@ export default function DeveloperNeonTemplate({ data }: { data: ParsedResumeData
           ))}
         </section>
 
+        {!!data.certifications.length && (
+          <section>
+            <h2 className="text-2xl font-bold mb-6 text-[#00d4ff]">Certifications</h2>
+            <ul className="list-disc space-y-2 pl-6 text-sm text-[#8899aa]">
+              {data.certifications.map(item => <li key={item}>{item}</li>)}
+            </ul>
+          </section>
+        )}
+
+        {!!data.achievements.length && (
+          <section>
+            <h2 className="text-2xl font-bold mb-6 text-[#00d4ff]">Achievements</h2>
+            <ul className="list-disc space-y-2 pl-6 text-sm text-[#8899aa]">
+              {data.achievements.map(item => <li key={item}>{item}</li>)}
+            </ul>
+          </section>
+        )}
+
         {/* Contact */}
         <section>
           <h2 className="text-2xl font-bold mb-6 text-[#00d4ff]">Contact</h2>
           <div className="flex flex-wrap gap-4 text-sm text-[#8899aa]">
-            {data.contact.email && <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-[#00d4ff]" />{data.contact.email}</span>}
-            {data.contact.phone && <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-[#00d4ff]" />{data.contact.phone}</span>}
-            {data.contact.location && <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-[#00d4ff]" />{data.contact.location}</span>}
+            {email && <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-[#00d4ff]" />{email}</span>}
+            {phone && <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-[#00d4ff]" />{phone}</span>}
+            {location && <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-[#00d4ff]" />{location}</span>}
           </div>
         </section>
       </div>

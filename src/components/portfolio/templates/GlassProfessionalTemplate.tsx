@@ -4,6 +4,10 @@ import { Mail, MapPin, Phone, ExternalLink, Github, Linkedin, Twitter } from 'lu
 const iconMap: Record<string, React.ElementType> = { GitHub: Github, LinkedIn: Linkedin, Twitter: Twitter };
 
 export default function GlassProfessionalTemplate({ data }: { data: ParsedResumeData }) {
+  const email = data.email || data.contact.email;
+  const phone = data.phone || data.contact.phone;
+  const location = data.location || data.contact.location;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1035] via-[#0f0a2e] to-[#130d30] text-[#e8e0f4] font-sans">
       {/* Hero */}
@@ -82,13 +86,31 @@ export default function GlassProfessionalTemplate({ data }: { data: ParsedResume
           ))}
         </section>
 
+        {!!data.certifications.length && (
+          <section className="rounded-2xl bg-[#ffffff06] backdrop-blur-xl border border-[#ffffff10] p-6">
+            <h2 className="text-xl font-bold mb-4">Certifications</h2>
+            <ul className="list-disc space-y-2 pl-6 text-sm text-[#a89ec4]">
+              {data.certifications.map(item => <li key={item}>{item}</li>)}
+            </ul>
+          </section>
+        )}
+
+        {!!data.achievements.length && (
+          <section className="rounded-2xl bg-[#ffffff06] backdrop-blur-xl border border-[#ffffff10] p-6">
+            <h2 className="text-xl font-bold mb-4">Achievements</h2>
+            <ul className="list-disc space-y-2 pl-6 text-sm text-[#a89ec4]">
+              {data.achievements.map(item => <li key={item}>{item}</li>)}
+            </ul>
+          </section>
+        )}
+
         {/* Contact */}
         <section className="rounded-2xl bg-[#ffffff06] backdrop-blur-xl border border-[#ffffff10] p-6">
           <h2 className="text-xl font-bold mb-4">Contact</h2>
           <div className="flex flex-wrap gap-4 text-sm text-[#a89ec4]">
-            {data.contact.email && <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-violet-400" />{data.contact.email}</span>}
-            {data.contact.phone && <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-violet-400" />{data.contact.phone}</span>}
-            {data.contact.location && <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-violet-400" />{data.contact.location}</span>}
+            {email && <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-violet-400" />{email}</span>}
+            {phone && <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-violet-400" />{phone}</span>}
+            {location && <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-violet-400" />{location}</span>}
           </div>
         </section>
       </div>

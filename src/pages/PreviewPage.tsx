@@ -5,9 +5,18 @@ import { Eye, Palette, Globe, Upload, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import PortfolioRenderer from '@/components/portfolio/PortfolioRenderer';
+import { useEffect } from 'react';
 
 export default function PreviewPage() {
   const { portfolio, hasPortfolio, hasResume, resumeData, togglePublish, loading } = usePortfolio();
+
+  useEffect(() => {
+    console.log('[resume-debug] Loaded preview page data', {
+      portfolioId: portfolio?.id,
+      templateId: portfolio?.template_id,
+      resumeData,
+    });
+  }, [portfolio?.id, portfolio?.template_id, resumeData]);
 
   if (loading) {
     return (

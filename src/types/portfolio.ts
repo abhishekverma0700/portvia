@@ -21,10 +21,16 @@ export interface ParsedResumeData {
   full_name: string;
   professional_title: string;
   about: string;
+  summary?: string;
+  email?: string;
+  phone?: string;
+  location?: string;
   skills: string[];
   projects: ProjectItem[];
   education: EducationItem[];
   experience: ExperienceItem[];
+  certifications: string[];
+  achievements: string[];
   contact: ContactInfo;
   social_links: SocialLink[];
 }
