@@ -1,30 +1,62 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePortfolio } from '@/contexts/PortfolioContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Sparkles, Plus, Trash2, Save } from 'lucide-react';
+import { Sparkles, Plus, Trash2, Save, Upload, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { ParsedResumeData, ProjectItem, EducationItem, ExperienceItem, SocialLink } from '@/types/portfolio';
+import { ParsedResumeData } from '@/types/portfolio';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 export default function EditPage() {
-  const { resumeData, setResumeData } = usePortfolio();
+  const { resumeData, savePortfolioData, hasResume, loading } = usePortfolio();
   const [data, setData] = useState<ParsedResumeData>({ ...resumeData });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setData({ ...resumeData });
+  }, [resumeData]);
 
   const update = (field: keyof ParsedResumeData, value: unknown) => {
     setData(prev => ({ ...prev, [field]: value }));
   };
 
-  const save = () => {
-    setResumeData(data);
-    toast.success('Changes saved!');
+  const save = async () => {
+    setSaving(true);
+    try {
+      await savePortfolioData(data);
+      toast.success('Changes saved!');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to save');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const aiImprove = (field: string) => {
     toast.info(`AI improvement for "${field}" coming soon!`);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!hasResume) {
+    return (
+      <div className="max-w-2xl mx-auto text-center py-20 space-y-4">
+        <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
+        <h1 className="text-2xl font-bold">No Resume Yet</h1>
+        <p className="text-muted-foreground">Upload your resume first to start editing your portfolio content.</p>
+        <Button asChild className="btn-glow"><Link to="/dashboard/upload"><Upload className="mr-2 h-4 w-4" /> Upload Resume</Link></Button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 pb-12">
@@ -33,7 +65,9 @@ export default function EditPage() {
           <h1 className="text-2xl font-bold">Edit Portfolio Content</h1>
           <p className="mt-1 text-muted-foreground">Review and customize your portfolio data.</p>
         </div>
-        <Button onClick={save} className="btn-glow gap-2"><Save className="h-4 w-4" /> Save</Button>
+        <Button onClick={save} className="btn-glow gap-2" disabled={saving}>
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
+        </Button>
       </motion.div>
 
       {/* Basic info */}
@@ -83,6 +117,9 @@ export default function EditPage() {
             <Textarea value={p.description} onChange={e => { const ps = [...data.projects]; ps[i] = { ...p, description: e.target.value }; update('projects', ps); }} rows={2} className="bg-muted/30 border-border/60 text-sm" />
           </div>
         ))}
+        <Button variant="outline" size="sm" onClick={() => update('projects', [...data.projects, { id: crypto.randomUUID(), title: '', description: '', tech_stack: [] }])} className="gap-1">
+          <Plus className="h-3 w-3" /> Add Project
+        </Button>
       </Section>
 
       {/* Experience */}
@@ -91,14 +128,17 @@ export default function EditPage() {
           <div key={exp.id} className="glass-card p-4 space-y-2 mb-3">
             <div className="flex justify-between items-start">
               <div>
-                <Input value={exp.position} onChange={e => { const xs = [...data.experience]; xs[i] = { ...exp, position: e.target.value }; update('experience', xs); }} className="bg-transparent border-none font-semibold p-0 h-auto" />
-                <Input value={exp.company} onChange={e => { const xs = [...data.experience]; xs[i] = { ...exp, company: e.target.value }; update('experience', xs); }} className="bg-transparent border-none text-sm text-muted-foreground p-0 h-auto mt-0.5" />
+                <Input value={exp.position} onChange={e => { const xs = [...data.experience]; xs[i] = { ...exp, position: e.target.value }; update('experience', xs); }} className="bg-transparent border-none font-semibold p-0 h-auto" placeholder="Position" />
+                <Input value={exp.company} onChange={e => { const xs = [...data.experience]; xs[i] = { ...exp, company: e.target.value }; update('experience', xs); }} className="bg-transparent border-none text-sm text-muted-foreground p-0 h-auto mt-0.5" placeholder="Company" />
               </div>
               <Button size="icon" variant="ghost" onClick={() => update('experience', data.experience.filter((_, j) => j !== i))}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
             </div>
             <Textarea value={exp.description} onChange={e => { const xs = [...data.experience]; xs[i] = { ...exp, description: e.target.value }; update('experience', xs); }} rows={2} className="bg-muted/30 border-border/60 text-sm" />
           </div>
         ))}
+        <Button variant="outline" size="sm" onClick={() => update('experience', [...data.experience, { id: crypto.randomUUID(), company: '', position: '', description: '', start_date: '', end_date: '' }])} className="gap-1">
+          <Plus className="h-3 w-3" /> Add Experience
+        </Button>
       </Section>
 
       {/* Education */}
@@ -114,6 +154,9 @@ export default function EditPage() {
             </div>
           </div>
         ))}
+        <Button variant="outline" size="sm" onClick={() => update('education', [...data.education, { id: crypto.randomUUID(), institution: '', degree: '', field: '', start_date: '', end_date: '' }])} className="gap-1">
+          <Plus className="h-3 w-3" /> Add Education
+        </Button>
       </Section>
 
       {/* Contact */}
@@ -135,10 +178,15 @@ export default function EditPage() {
             <Button size="icon" variant="ghost" onClick={() => update('social_links', data.social_links.filter((_, j) => j !== i))}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
           </div>
         ))}
+        <Button variant="outline" size="sm" onClick={() => update('social_links', [...data.social_links, { id: crypto.randomUUID(), platform: '', url: '' }])} className="gap-1">
+          <Plus className="h-3 w-3" /> Add Link
+        </Button>
       </Section>
 
       <div className="flex justify-end">
-        <Button onClick={save} className="btn-glow gap-2"><Save className="h-4 w-4" /> Save Changes</Button>
+        <Button onClick={save} className="btn-glow gap-2" disabled={saving}>
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save Changes
+        </Button>
       </div>
     </div>
   );

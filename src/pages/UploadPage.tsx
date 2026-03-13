@@ -4,9 +4,10 @@ import { usePortfolio } from '@/contexts/PortfolioContext';
 import { Button } from '@/components/ui/button';
 import { Upload, FileText, Check, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function UploadPage() {
-  const { uploadResume, hasResume, resume } = usePortfolio();
+  const { uploadResume, hasResume, resume, loading: ctxLoading } = usePortfolio();
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState(false);
@@ -15,11 +16,20 @@ export default function UploadPage() {
 
   const handleFile = async (file: File) => {
     const ext = file.name.split('.').pop()?.toLowerCase();
-    if (!ext || !['pdf', 'docx'].includes(ext)) return;
+    if (!ext || !['pdf', 'docx'].includes(ext)) {
+      toast.error('Please upload a PDF or DOCX file.');
+      return;
+    }
     setUploading(true);
-    await uploadResume(file);
-    setUploading(false);
-    setDone(true);
+    try {
+      await uploadResume(file);
+      setDone(true);
+      toast.success('Resume uploaded successfully!');
+    } catch (err: any) {
+      toast.error(err.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const onDrop = (e: React.DragEvent) => {
@@ -29,6 +39,14 @@ export default function UploadPage() {
     if (file) handleFile(file);
   };
 
+  if (ctxLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -36,11 +54,7 @@ export default function UploadPage() {
         <p className="mt-1 text-muted-foreground">Upload a PDF or DOCX file to get started.</p>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         {done || hasResume ? (
           <div className="glass-card neon-border p-10 text-center space-y-4">
             <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
@@ -71,7 +85,7 @@ export default function UploadPage() {
             {uploading ? (
               <div className="space-y-3">
                 <Loader2 className="mx-auto h-12 w-12 text-primary animate-spin" />
-                <p className="font-medium">Uploading & parsing...</p>
+                <p className="font-medium">Uploading...</p>
               </div>
             ) : (
               <div className="space-y-3">
