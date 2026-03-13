@@ -6,6 +6,15 @@ import { useNavigate, Link } from 'react-router-dom';
 import { PortfolioTemplate } from '@/types/portfolio';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import developerImg from '@/assets/devloper.jpg';
+import glassImg from '@/assets/glass.jpg';
+import elegantImg from '@/assets/elegant.jpg';
+
+const templateImages: Record<string, string> = {
+  'developer-neon': developerImg,
+  'glass-professional': glassImg,
+  'minimal-elegant': elegantImg,
+};
 
 const templates: PortfolioTemplate[] = [
   { id: 'developer-neon', name: 'Developer Neon', description: 'Dark theme with glowing neon tech aesthetics. Perfect for developers.', preview_gradient: 'from-cyan-500 to-blue-600', tags: ['Dark', 'Futuristic', 'Tech'] },
@@ -69,9 +78,16 @@ export default function TemplatesPage() {
               className={`glass-card overflow-hidden transition-all cursor-pointer group ${selected ? 'neon-border' : 'hover:border-primary/30'}`}
               onClick={() => !selecting && handleSelect(t.id)}
             >
-              <div className={`h-40 bg-gradient-to-br ${t.preview_gradient} opacity-80 group-hover:opacity-100 transition-opacity relative`}>
+              <div className="relative h-44 overflow-hidden">
+                <img
+                  src={templateImages[t.id]}
+                  alt={`${t.name} preview`}
+                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                />
+                {/* subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 {selected && (
-                  <div className="absolute top-3 right-3 h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                  <div className="absolute top-3 right-3 h-8 w-8 rounded-full bg-primary flex items-center justify-center shadow-lg">
                     <Check className="h-4 w-4 text-primary-foreground" />
                   </div>
                 )}

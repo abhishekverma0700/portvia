@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import demoVideo from '@/assets/resumemasterconversion.mp4';
 
 export default function HeroSection() {
   return (
@@ -53,23 +54,26 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="mx-auto mt-20 max-w-4xl"
         >
-          <div className="glass-card neon-border overflow-hidden p-1">
-            <div className="rounded-lg bg-muted/30 p-8">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
-                <div className="h-3 w-3 rounded-full bg-green-500/60" />
-              </div>
-              <div className="space-y-3">
-                <div className="h-4 w-3/4 rounded bg-muted animate-pulse" />
-                <div className="h-4 w-1/2 rounded bg-muted animate-pulse" />
-                <div className="h-32 w-full rounded bg-muted/50 animate-pulse mt-4" />
-                <div className="flex gap-3 mt-4">
-                  <div className="h-8 w-24 rounded bg-primary/20 animate-pulse-glow" />
-                  <div className="h-8 w-24 rounded bg-accent/20 animate-pulse" />
-                </div>
+          <div className="glass-card neon-border overflow-hidden rounded-xl p-1 shadow-2xl shadow-primary/10">
+            {/* Browser chrome bar */}
+            <div className="flex items-center gap-2 rounded-t-lg bg-muted/40 px-4 py-3 backdrop-blur-sm">
+              <div className="h-3 w-3 rounded-full bg-destructive/70" />
+              <div className="h-3 w-3 rounded-full bg-yellow-500/70" />
+              <div className="h-3 w-3 rounded-full bg-green-500/70" />
+              <div className="mx-4 flex-1 rounded-full bg-muted/60 px-3 py-1 text-left text-xs text-muted-foreground/60">
+                portvia.app/portfolio/your-name
               </div>
             </div>
+            {/* Video */}
+            <video
+              src={demoVideo}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full rounded-b-lg object-cover"
+              style={{ maxHeight: '480px' }}
+            />
           </div>
         </motion.div>
       </div>
