@@ -14,7 +14,163 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      portfolio_sections: {
+        Row: {
+          content_json: Json | null
+          id: string
+          portfolio_id: string
+          section_type: string
+          sort_order: number
+        }
+        Insert: {
+          content_json?: Json | null
+          id?: string
+          portfolio_id: string
+          section_type: string
+          sort_order?: number
+        }
+        Update: {
+          content_json?: Json | null
+          id?: string
+          portfolio_id?: string
+          section_type?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_sections_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portfolios: {
+        Row: {
+          created_at: string
+          data: Json | null
+          id: string
+          is_published: boolean
+          slug: string
+          template_id: string
+          theme_mode: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          is_published?: boolean
+          slug: string
+          template_id?: string
+          theme_mode?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          is_published?: boolean
+          slug?: string
+          template_id?: string
+          theme_mode?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          role: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id: string
+          role?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          role?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      resumes: {
+        Row: {
+          file_url: string
+          id: string
+          original_filename: string
+          parsed_data_json: Json | null
+          uploaded_at: string
+          user_id: string
+        }
+        Insert: {
+          file_url: string
+          id?: string
+          original_filename: string
+          parsed_data_json?: Json | null
+          uploaded_at?: string
+          user_id: string
+        }
+        Update: {
+          file_url?: string
+          id?: string
+          original_filename?: string
+          parsed_data_json?: Json | null
+          uploaded_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      social_links: {
+        Row: {
+          id: string
+          platform: string
+          portfolio_id: string
+          url: string
+        }
+        Insert: {
+          id?: string
+          platform: string
+          portfolio_id: string
+          url: string
+        }
+        Update: {
+          id?: string
+          platform?: string
+          portfolio_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_links_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
